@@ -1,0 +1,295 @@
+﻿<Window x:Name="Dea_Maim_Window" x:Class="DEA_APP.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DEA_APP"
+        mc:Ignorable="d"
+        Title="Data Exchange Adapter" 
+        WindowStartupLocation="CenterScreen"  
+        ScrollViewer.CanContentScroll="True" 
+        Width="1053"
+        Height="auto" Loaded="Dea_Maim_Window_Loaded"
+        >
+
+    <Window.Resources>
+        <ObjectDataProvider x:Key="GetTaskNumList"  ObjectType="{x:Type local:GetInfoService}" MethodName="GetTaskNumList"></ObjectDataProvider>
+        <ObjectDataProvider x:Key="GetComNumList"  ObjectType="{x:Type local:GetInfoService}"  MethodName="GetComNumList"></ObjectDataProvider>
+        <ObjectDataProvider x:Key="GetReadWriteList"  ObjectType="{x:Type local:GetInfoService}" MethodName="GetReadWriteList"></ObjectDataProvider>
+        <ObjectDataProvider x:Key="GetDeviceNumList" ObjectType="{x:Type local:GetInfoService}"  MethodName="GetDeviceNumList"></ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="GetSpdList" ObjectType="{x:Type local:GetInfoService}"  MethodName="GetSpdList"></ObjectDataProvider>
+        <ObjectDataProvider x:Key="GetBitList" ObjectType="{x:Type local:GetInfoService}"  MethodName="GetBitList"></ObjectDataProvider>
+        <ObjectDataProvider x:Key="GetSyncBitList" ObjectType="{x:Type local:GetInfoService}"  MethodName="GetSyncBitList"></ObjectDataProvider>
+        <ObjectDataProvider x:Key="GetStopBitList" ObjectType="{x:Type local:GetInfoService}"  MethodName="GetStopBitList"></ObjectDataProvider>
+        <ObjectDataProvider x:Key="GetProtocolList" ObjectType="{x:Type local:GetInfoService}"  MethodName="GetProtocolList"></ObjectDataProvider>
+
+
+    </Window.Resources>
+    <ScrollViewer x:Name="scrollViewer" Width="auto" Height="auto" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+        <DockPanel Name="panel" >
+            <Menu x:Name="menu" Height="25" DockPanel.Dock="Top" >
+                <MenuItem  Header="系统" Name="menu_System" >
+                    <MenuItem Header="日志" Name="menu_System_Log" Click="menu_System_Log_Click"></MenuItem>
+                    <MenuItem Header="操作说明" Name="menu_account" Click="menu_account_Click"></MenuItem>
+                    <MenuItem Header="退出" Name="menu_exit" Height="25" Click="menu_exit_Click" ></MenuItem>
+                </MenuItem>
+                <MenuItem  Header="任务" Name="menu_Task_top" >
+                    <MenuItem Header="联机测试" Name="menu_con" Height="25" Click="menu_con_Click"></MenuItem>
+                    <MenuItem Header="打开任务" Name="menu_Open_Task" Height="25" Click="menu_Open_Task_Click" ></MenuItem>
+                    <MenuItem Header="任务管理" Name="menu_Task" Height="25" Click="menu_Task_Click"></MenuItem>
+                </MenuItem>
+                <!-- <Button x:Name="_Menu_System"  Content="系统管理" Background="#FFF0F0F0" BorderThickness="0" Width="51" Height="20" ToolTip="" />
+            <Button x:Name="_Menu_DeviceSet" ToolTip="配置DEA端口属性！" Height="20" Width="50" Content="端口设置" HorizontalAlignment="Left" BorderThickness="0"  Background="#FFF0F0F0" Click="_Menu_DeviceSet_Click"/>
+            <Button x:Name="_Menu_DeviceIn" Content="设备设置" Background="#FFF0F0F0" Width="50" Height="20" BorderThickness="0" ToolTip="主、从站点设备！" Click="_Menu_DeviceIn_Click" />
+            <Button x:Name="_Menu_Task" Content="任务设置" Background="#FFF0F0F0" Width="50" Height="20" BorderThickness="0" OpacityMask="Black" ToolTip="定义DEA要进行的数据交换任务！" Click="_Menu_Task_Click"/>
+            <Button x:Name="_Menu_Abust" Content="关于" Width="50" Height="20" BorderThickness="0" OpacityMask="Black" Background="#FFF0F0F0" ToolTip="关于此软件相关信息！" Click="_Menu_Abust_Click" />
+            -->
+            </Menu>
+
+
+
+            <Grid x:Name="_Grid_DeviceSet"  DockPanel.Dock="Top"  Margin="0,5,0,0" Width="auto" ShowGridLines="False" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Background="Khaki" Grid.Row="0" Grid.ColumnSpan="3" Content="端口设置" FontWeight="Bold"></Label>
+                <Button Name="_Add_Devece" Width="75" Height="25" Content="增加端口" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Click="_Add_Devece_Click" FontSize="14" FontWeight="Bold"></Button>
+                <!--<Button Name="test_But" Width="75" Height="25" Content="调试按钮" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Click="test_But_Click" FontSize="14" FontWeight="Bold"  ></Button>-->
+                <DataGrid Name="_DataGrid_DeviceSet" 
+                          Grid.Row="2" 
+                          Grid.ColumnSpan="3" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False" 
+                          RowDetailsVisibilityMode="VisibleWhenSelected"
+                          SelectionMode="Extended" 
+                          SelectionUnit="FullRow"
+                          Loaded="_DataGrid_DeviceSet_Loaded" 
+                          Background="#FFCB9797">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn x:Name="_DataGrid_DeviceSet_do1" Header="操作" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Name="_DropDevice_but" Margin="1,1,1,1" Content="删除" Click="_DropDevice_but_Click"></Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="端口 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_DeviceSet_ComBox_DeviceSet" ItemsSource="{Binding Source={StaticResource GetComNumList}}"  Width="65" Margin="1,1,1,1" DropDownClosed="_DataGrid_DeviceSet_ComBox_DeviceSet_DropDownClosed"  />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="端口协议 *" x:Name="_DataGrid_DeviceSet_ComBox_Protocol1">
+                            <DataGridTemplateColumn.CellTemplate >
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_DeviceSet_ComBox_Protocol"  ItemsSource="{Binding Source={StaticResource GetProtocolList}}" Width="180" Margin="1,1,1,1"   />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="传输速度 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_DeviceSet_ComBox_Spd" ItemsSource="{Binding Source={StaticResource GetSpdList}}"  Width="70" Margin="1,1,1,1"  />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="位长 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_DeviceSet_ComBox_Bit" ItemsSource="{Binding Source={StaticResource GetBitList}}"  Width="50" Margin="1,1,1,1"  />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="同步位 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_DeviceSet_ComBox_Sync_Bit" ItemsSource="{Binding Source={StaticResource GetSyncBitList}}"  Width="60" Margin="1,1,1,1"  />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="停止位 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_DeviceSet_ComBox_Stop_Bit" ItemsSource="{Binding Source={StaticResource GetStopBitList}}"  Width="50" Margin="1,1,1,1"  />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!--
+                        <DataGridComboBoxColumn  x:Name="_DataGrid_DeviceSet_ComBox_DeviceSet" Header="端口 *" SelectedItemBinding="{Binding comSetData}" CanUserSort="False" Width="60" />
+                        <DataGridComboBoxColumn x:Name="_DataGrid_DeviceSet_ComBox_Protocol" Header="端口协议 *" SelectedItemBinding="{Binding _ProtocolData}" CanUserSort="False" Width="180" ></DataGridComboBoxColumn>
+                        <DataGridComboBoxColumn x:Name="_DataGrid_DeviceSet_ComBox_Spd" Header="传输速度 *" SelectedItemBinding="{Binding spdData}" CanUserSort="False" Width="70" ></DataGridComboBoxColumn>
+                        <DataGridComboBoxColumn x:Name="_DataGrid_DeviceSet_ComBox_Bit" Header="位长 *"  SelectedItemBinding="{Binding bitData}" CanUserSort="False" Width="35" ></DataGridComboBoxColumn>
+                        <DataGridComboBoxColumn x:Name="_DataGrid_DeviceSet_ComBox_Sync_Bit" Header="同步位 *"  SelectedItemBinding="{Binding synbitData}" CanUserSort="False" ></DataGridComboBoxColumn>
+                        <DataGridComboBoxColumn x:Name="_DataGrid_DeviceSet_ComBox_Stop_Bit" Header="停止位 *"  SelectedItemBinding="{Binding stopbitData}" CanUserSort="False" ></DataGridComboBoxColumn>
+                        -->
+
+                        <DataGridTemplateColumn  Header="是否主站">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <RadioButton GroupName="test" Name="_DataGrid_DeviceSet_RadioBut_Is_Main" Margin="1,1,1,1" HorizontalAlignment="Center" Checked="_DataGrid_DeviceSet_RadioBut_Is_Main_Checked" IsChecked="False" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="故障设备记录元件">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Name="_DropDevice_siteTxtBox"   Width="90"   MaxLength="10"   Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch" TextChanged="_DropDevice_siteTxtBox_TextChanged" MaxLines="15" PreviewKeyDown="_DropDevice_siteTxtBox_PreviewKeyDown" ></TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="设备停止记录元件">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox  Name="_DropDevice_stopTxtBox" Width="90"   MaxLength="10"   Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch" TextChanged="_DropDevice_stopTxtBox_TextChanged" MaxLines="15" PreviewKeyDown="_DropDevice_stopTxtBox_PreviewKeyDown"></TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <Grid x:Name="_Grid_TaskSet"  DockPanel.Dock="Top"  Margin="0,5,0,0" Width="auto" ShowGridLines="False" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="28"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="224"/>
+                    <ColumnDefinition Width="126"/>
+                    <ColumnDefinition Width="99"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Background="Khaki" Grid.Row="0" Grid.ColumnSpan="6" Content="任务设置" FontWeight="Bold"></Label>
+                <Button Name="_Add_Task_But" Width="75" Height="25" Content="新增站" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Click="_Add_Task_But_Click" Margin="0,2" FontSize="14" FontWeight="Bold"></Button>
+
+                <Label Content="任务延时(毫秒):" Grid.Row="1" Grid.Column="1" Width="100" HorizontalAlignment="Left" Margin="6,1,0,25" Grid.RowSpan="2" ></Label>
+                <TextBox Name="taskDelay" Visibility="Visible"  Grid.Row="1" Grid.Column="1" Width="50" Margin="99,4,0,5" RenderTransformOrigin="-1.321,0.527" HorizontalAlignment="Left" Text="5" PreviewKeyDown="_taskDelay_PreviewKeyDown"/>
+                <DataGrid Name="_DataGrid_TaskSet" 
+                          Grid.Row="2" 
+                          Grid.ColumnSpan="6" 
+                          Loaded="_DataGrid_TaskSet_Loaded" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False" 
+                          RowDetailsVisibilityMode="VisibleWhenSelected"
+                          SelectionMode="Extended" 
+                          SelectionUnit="FullRow" 
+                          Background="#FFCB9797">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn x:Name="_DataGrid_TaskSet_do" Header="操作" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Name="_DropTask_but" Margin="1,1,1,1" Content="删除" Click="_DropTask_but_Click" ></Button>
+
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn> 
+
+                        <DataGridTemplateColumn Header="任务号 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_TaskSet_ComBox_TaskNum" ItemsSource="{Binding Source={StaticResource GetTaskNumList}}"  Width="65" Margin="1,1,1,1" Text="" DropDownClosed="_DataGrid_TaskSet_ComBox_TaskNum_DropDownClosed"  />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="端口 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_TaskSet_ComBox_DeviceSet" ItemsSource="{Binding Source={StaticResource GetComNumList}}"  Width="65" Margin="1,1,1,1" DropDownClosed="_DataGrid_TaskSet_ComBox_DeviceSet_DropDownClosed"  ></ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="主站设备">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Name="_DataGrid_TaskSet_Label_Is_Main"  Width="40" Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch" IsEnabled="False"  ></Label>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="读/写 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_TaskSet_ComBox_ReadWrite" ItemsSource="{Binding Source={StaticResource GetReadWriteList}}"  Width="65" Margin="1,1,1,1" DataContextChanged="_DataGrid_TaskSet_ComBox_ReadWrite_DataContextChanged"  ></ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="站号 *">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox Name="_DataGrid_TaskSet_ComBox_DeviceNum" ItemsSource="{Binding Source={StaticResource GetDeviceNumList}}"  Width="65" Margin="1,1,1,1"  ></ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!--<DataGridComboBoxColumn x:Name="_DataGrid_TaskSet_ComBox_TaskNum" SelectedValueBinding="{Binding taskData.TaskSet_ComBox_TaskNum}" Header="任务号 *" CanUserSort="False" Width="60" />
+                        <DataGridComboBoxColumn x:Name="_DataGrid_TaskSet_ComBox_DeviceSet" Header="端口 *"  CanUserSort="False" Width="60" />
+                        <DataGridComboBoxColumn x:Name="_DataGrid_TaskSet_ComBox_ReadWrite" Header="读/写 *"  CanUserSort="False" Width="60" />
+                        <DataGridComboBoxColumn x:Name="_DataGrid_TaskSet_ComBox_DeviceType" Header="设备型号" SelectedItemBinding="{Binding comSetData}" CanUserSort="False" Width="200" />
+                        <DataGridComboBoxColumn x:Name="_DataGrid_TaskSet_ComBox_DeviceNum" Header="站号 *"  CanUserSort="False" Width="60" />-->
+
+                        <!--<DataGridComboBoxColumn x:Name="_DataGrid_TaskSet_ComBox_Protocol" Header="端口协议" SelectedItemBinding="{Binding _ProtocolData}" CanUserSort="False" Width="180" ></DataGridComboBoxColumn>-->
+                        <DataGridTemplateColumn Header="读取地址/元件">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Name="_DataGrid_TaskSet_textBox_readWriteAdd" MaxLength="10"  Width="120" Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch" TextChanged="_DataGrid_TaskSet_textBox_readWriteAdd_TextChanged" PreviewKeyDown="_DataGrid_TaskSet_textBox_readWriteAdd_PreviewKeyDown"  ></TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="读取长度">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Name="_DataGrid_TaskSet_textBox_readLen" MaxLength="2"   Width="60" Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch" TextChanged="_DataGrid_TaskSet_textBox_readLen_TextChanged"   PreviewKeyDown="_DataGrid_TaskSet_textBox_readLen_PreviewKeyDown" InputMethod.IsInputMethodEnabled="False" IsEnabled="True"></TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="数据长度">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Name="_DataGrid_TaskSet_textBox_dataLen"  MaxLength="2"  Width="60" Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch" TextChanged="_DataGrid_TaskSet_textBox_dataLen_TextChanged" PreviewKeyDown="_DataGrid_TaskSet_textBox_dataLen_PreviewKeyDown"  ></TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="写入地址/元件">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Name="_DataGrid_TaskSet_textBox_writeAdd"  MaxLength="10"  Width="120" Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch" TextChanged="_DataGrid_TaskSet_textBox_writeAdd_TextChanged" PreviewKeyDown="_DataGrid_TaskSet_textBox_writeAdd_PreviewKeyDown"  ></TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="数据索引">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Name="_DataGrid_TaskSet_textBox_dataIndex"  Width="300" Margin="1,1,1,1" HorizontalAlignment="Center" VerticalAlignment="Stretch"  ></TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Name="_UpLoad_Task_But" Width="54" Height="25" Content="上传" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" Click="_UpLoad_Task_But_Click" Grid.RowSpan="2" FontSize="14" FontWeight="Bold"  ></Button>
+                <Button Name="_ToFile_Task_But" Width="56" Height="25" Content="保存" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Center" Click="_ToFile_Task_But_Click" Grid.RowSpan="2" FontSize="14" FontWeight="Bold" />
+                <!--<Button Name="test_But1" Width="55" Height="25" Content="调试按钮" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Click="test_But1_Click" Margin="0,2"  ></Button>-->
+            </Grid>
+        </DockPanel >
+    </ScrollViewer >
+</Window>
